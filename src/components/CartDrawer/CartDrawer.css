@@ -28,3 +28,16 @@
 .cart__foot .btn { padding: 14px; font-size: 15px; }
 .cart__clear { border: 0; background: transparent; color: var(--muted); font-size: 13px; padding: 6px; }
 @media (prefers-reduced-motion: reduce) { .cart, .cart-scrim { transition: none; } }
+
+.cart__min { display: grid; gap: .6rem; margin-bottom: .9rem; font-size: .9rem; }
+.cart__min p { margin: 0; }
+.cart__bar { height: 6px; border-radius: 99px; background: rgba(0, 0, 0, .1); overflow: hidden; }
+.cart__bar span { display: block; height: 100%; background: currentColor; transition: width .25s ease; }
+.cart__suggest { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.csug { display: grid; grid-template-columns: 44px 1fr auto; gap: .6rem; align-items: center; }
+.csug__img { width: 44px; height: 44px; object-fit: cover; border-radius: 6px; }
+.csug__name { margin: 0; line-height: 1.2; }
+.csug__price { margin: 0; font-weight: 600; }
+.csug__add { padding: .35rem .7rem; font-size: .85rem; }
+.cart__foot .btn:disabled { opacity: .55; cursor: not-allowed; }
+
