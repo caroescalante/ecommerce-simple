@@ -159,7 +159,7 @@ export default function Header() {
           ))}
         </ul>
         <div className="drawer__foot">
-          <Link className="btn" to="/cuenta">Mi cuenta</Link>
+          <Link className="btn" to="/admin">Mi cuenta</Link>
           <Link className="btn btn--accent" to="/pedido-rapido">Pedido rápido</Link>
         </div>
       </aside>
