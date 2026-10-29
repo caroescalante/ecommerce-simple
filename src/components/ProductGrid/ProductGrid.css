@@ -1,0 +1,13 @@
+.pgrid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; }
+@media (min-width: 640px) { .pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 18px; } }
+@media (min-width: 960px) { .pgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1200px) { .pgrid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.pgrid__skeleton div { aspect-ratio: 1 / 1; border-radius: 14px; }
+.pgrid__skeleton span { display: block; height: 12px; border-radius: 6px; margin-top: 10px; width: 60%; }
+.pgrid__skeleton span + span { width: 90%; }
+.pgrid__skeleton div, .pgrid__skeleton span { background: linear-gradient(90deg, var(--soft) 25%, var(--line) 50%, var(--soft) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite linear; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .pgrid__skeleton div, .pgrid__skeleton span { animation: none; } }
+.pgrid__state { text-align: center; padding: 48px 16px; color: var(--muted); display: grid; gap: 14px; justify-items: center; }
+.pgrid__state p { margin: 0; }
+.pgrid__state .btn { padding: 10px 22px; }

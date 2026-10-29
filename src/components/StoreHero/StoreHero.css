@@ -1,0 +1,78 @@
+.hero { max-width: 1280px; margin: 0 auto; }
+
+/* ===== Banner ===== */
+.hero__banner { position: relative; height: clamp(150px, 34vw, 300px); border-radius: 0 0 20px 20px; overflow: hidden; background: var(--brand-dark); }
+.hero__banner > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero__art {
+  width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.18), transparent 45%),
+    radial-gradient(circle at 90% 90%, rgba(0, 0, 0, 0.35), transparent 50%),
+    repeating-linear-gradient(-12deg, rgba(255, 255, 255, 0.05) 0 18px, transparent 18px 36px),
+    linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+}
+.hero__art span {
+  color: rgba(255, 255, 255, 0.92); font-weight: 700; font-style: italic; text-transform: uppercase;
+  font-size: clamp(22px, 6vw, 64px); letter-spacing: 0.04em; text-align: center; padding: 0 24px; transform: skewX(-8deg);
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+/* ===== Estado Abierto / Cerrado ===== */
+.status { display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); color: var(--ink); font-size: 13px; font-weight: 500; white-space: nowrap; }
+.status i { width: 12px; height: 12px; border-radius: 50%; border: 3px solid; display: block; }
+.status--open i { border-color: #bbf7d0; background: #16a34a; }
+.status--closed i { border-color: #fecaca; background: #dc2626; }
+@media (prefers-color-scheme: dark) {
+  .status--open i { border-color: #14532d; background: #4ade80; }
+  .status--closed i { border-color: #7f1d1d; background: #f87171; }
+}
+.status--float { position: absolute; left: 14px; top: 14px; }
+.status--inline { display: none; }
+
+/* ===== Cuerpo ===== */
+.hero__body {
+  padding: 0 16px 8px;
+  display: grid; grid-template-columns: 1fr auto; grid-template-areas: "logo logo" "info info" "actions actions"; gap: 12px;
+}
+.hero__logo { grid-area: logo; width: 92px; height: 92px; border-radius: 18px; border: 3px solid var(--bg); background: var(--brand); margin-top: -46px; position: relative; z-index: 2; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); object-fit: cover; }
+.hero__info { grid-area: info; }
+.hero__name { margin: 0; font-size: clamp(22px, 6vw, 34px); line-height: 1.15; letter-spacing: -0.02em; }
+.hero__detail { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+.hero__actions { grid-area: actions; display: flex; gap: 10px; }
+.hero__wa, .hero__info-btn { height: 46px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; font-size: 15px; }
+.hero__wa { width: 46px; flex: none; }
+.hero__info-btn { flex: 1; }
+.hero__wa:hover, .hero__info-btn:hover { background: var(--soft); }
+
+/* ===== Modal de información ===== */
+.modal { width: min(92vw, 440px); border: 0; border-radius: 20px; padding: 20px; background: var(--bg); color: var(--ink); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4); }
+.modal::backdrop { background: rgba(2, 6, 23, 0.6); }
+.modal__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.modal__head h2 { margin: 0; font-size: 22px; }
+.modal__sub { margin: 2px 0 12px; color: var(--muted); font-size: 14px; }
+.modal__detail { margin-left: 10px; color: var(--muted); font-size: 14px; }
+.modal h3 { margin: 20px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.hours { list-style: none; margin: 0; padding: 0; }
+.hours li { display: flex; justify-content: space-between; padding: 9px 12px; border-radius: 10px; font-size: 14px; }
+.hours li span:first-child { text-transform: capitalize; }
+.hours li.is-today { background: var(--soft); font-weight: 600; }
+.modal__link { display: block; padding: 12px; border-radius: 12px; background: var(--brand); color: #fff; text-align: center; font-weight: 600; }
+
+/* ===== Tablet y escritorio ===== */
+@media (min-width: 700px) {
+  .hero__body { padding: 0 24px 12px; grid-template-columns: auto 1fr auto; grid-template-areas: "logo info actions"; align-items: end; gap: 20px; }
+  .hero__logo { width: 140px; height: 140px; margin-top: -70px; border-radius: 22px; }
+  .hero__info { padding-bottom: 8px; }
+  .hero__name { display: inline; margin-right: 12px; vertical-align: middle; }
+  .status--float { display: none; }
+  .status--inline { display: inline-flex; vertical-align: middle; }
+  .hero__detail { margin-top: 8px; }
+  .hero__actions { padding-bottom: 8px; }
+  .hero__info-btn { flex: none; padding: 0 22px; }
+  .hero__banner { border-radius: 0 0 24px 24px; }
+}
+
+.hours li { gap: 12px; }
+.hours li span:last-child { text-align: right; }
+.hours__note { margin: 8px 12px 0; color: var(--muted); font-size: 12px; }

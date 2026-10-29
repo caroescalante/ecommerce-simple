@@ -1,0 +1,90 @@
+/* ===== Barra superior ===== */
+.topbar { background: var(--brand-dark); color: #fff; font-size: 12px; font-weight: 500; overflow: hidden; }
+.topbar__inner { display: flex; gap: 32px; padding: 8px 16px; white-space: nowrap; width: max-content; animation: ticker 24s linear infinite; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+
+/* ===== Header ===== */
+.header { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--line); }
+.header__bar {
+  max-width: 1280px; margin: 0 auto; padding: 10px 16px;
+  display: grid; grid-template-columns: auto 1fr auto;
+  grid-template-areas: "menu logo actions" "search search search";
+  gap: 10px 12px; align-items: center;
+}
+.header__menu { grid-area: menu; }
+.logo { grid-area: logo; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--brand-text); letter-spacing: -0.02em; }
+.logo img { width: 44px; height: 44px; border-radius: 12px; display: block; object-fit: cover; }
+.logo em { font-style: normal; color: var(--ink); }
+.header__actions { grid-area: actions; display: flex; gap: 8px; align-items: center; }
+.account { display: none; }
+
+.icon-btn { width: 42px; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); display: grid; place-items: center; position: relative; }
+.icon-btn:hover { background: var(--soft); }
+.badge { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--brand); color: #fff; box-shadow: 0 0 0 2px var(--bg); font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+
+.search { grid-area: search; display: flex; background: var(--soft); border-radius: 12px; overflow: hidden; border: 1px solid transparent; }
+.search:focus-within { border-color: var(--brand); }
+.search input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 11px 14px; font-size: 14px; color: var(--ink); }
+.search input:focus { outline: 0; }
+.search button { border: 0; background: var(--brand); color: #fff; width: 46px; display: grid; place-items: center; }
+
+/* ===== Navbar de categorías ===== */
+.catnav { border-top: 1px solid var(--line); background: var(--bg); }
+.catnav__inner { max-width: 1280px; margin: 0 auto; position: relative; display: flex; align-items: center; }
+.catnav ul { list-style: none; margin: 0; padding: 0 16px; display: flex; gap: 4px; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; flex: 1; min-width: 0; -webkit-overflow-scrolling: touch; }
+.catnav ul::-webkit-scrollbar { display: none; }
+.catnav li { flex: none; }
+.catnav a { display: block; padding: 13px 14px; font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; white-space: nowrap; }
+.catnav a:hover { color: var(--ink); }
+.catnav a[aria-current="page"] { color: var(--brand-text); border-color: var(--brand-text); }
+.catnav__inner::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 28px; background: linear-gradient(90deg, transparent, var(--bg)); pointer-events: none; }
+/* Las flechas ocupan su propio lugar a los costados: ya no tapan ninguna categoría */
+.catnav__arrow { display: none; flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); place-items: center; }
+.catnav__arrow--l { margin-left: 6px; }
+.catnav__arrow--r { margin-right: 6px; }
+
+/* ===== Menú lateral (celular) ===== */
+.scrim { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.55); opacity: 0; visibility: hidden; transition: 0.25s; z-index: 90; }
+.scrim.is-open { opacity: 1; visibility: visible; }
+.drawer { position: fixed; top: 0; bottom: 0; left: 0; width: min(86vw, 340px); background: var(--bg); z-index: 100; transform: translateX(-100%); transition: transform 0.25s; display: flex; flex-direction: column; visibility: hidden; }
+.drawer.is-open { transform: none; visibility: visible; }
+.drawer__head { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--brand); color: #fff; }
+.drawer__head .icon-btn { background: transparent; border-color: rgba(255, 255, 255, 0.35); color: #fff; }
+.drawer ul { list-style: none; margin: 0; padding: 8px; overflow-y: auto; flex: 1; }
+.drawer li a { display: flex; align-items: center; justify-content: space-between; padding: 14px 12px; border-radius: 12px; font-weight: 600; font-size: 15px; }
+.drawer li a:hover, .drawer li a[aria-current="page"] { background: var(--soft); }
+.drawer li a[aria-current="page"] { color: var(--brand-text); }
+.drawer__foot { padding: 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 14px; border: 1px solid var(--line); background: var(--bg); }
+.btn--accent { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+/* ===== Tablet ===== */
+@media (min-width: 700px) {
+  .header__bar { grid-template-columns: auto auto 1fr auto; grid-template-areas: "menu logo search actions"; padding: 12px 24px; }
+  .catnav ul { padding: 0 24px; }
+}
+
+/* ===== Escritorio ===== */
+@media (min-width: 900px) {
+  .topbar__inner { width: auto; max-width: 1280px; margin: 0 auto; justify-content: space-between; animation: none; }
+  .topbar__dup { display: none; }
+}
+@media (min-width: 1000px) {
+  .header__menu, .drawer, .scrim { display: none; }
+  .header__bar { grid-template-columns: auto minmax(260px, 1fr) auto; grid-template-areas: "logo search actions"; }
+  .account { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; padding: 0 10px; height: 42px; border-radius: 12px; }
+  .account:hover { background: var(--soft); }
+  .catnav__arrow { display: grid; }
+  .catnav ul { padding: 0 8px; }
+  .catnav__inner::after { display: none; }
+}
+/* Centrado seguro: si entran todas se centran; si no entran, se puede scrollear desde la primera */
+@media (min-width: 1280px) {
+  .catnav li:first-child { margin-left: auto; }
+  .catnav li:last-child { margin-right: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar__inner { animation: none; width: auto; overflow-x: auto; }
+  .drawer, .scrim { transition: none; }
+}

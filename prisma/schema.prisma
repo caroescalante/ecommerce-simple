@@ -1,0 +1,55 @@
+// Describe la base `ecommerce-dismarco` (ver dismarco_local_setup.sql).
+// Los nombres de tabla y columna de la base se mantienen con @map / @@map.
+// Lo que Prisma no puede describir (CHECKs, triggers, roles, permisos y el índice único
+// sobre lower(email)) vive en los archivos .sql.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Categoria {
+  id        Int        @id(map: "categorias_pkey") @default(autoincrement())
+  slug      String     @unique(map: "categorias_slug_key") @db.VarChar(60)
+  nombre    String     @db.VarChar(100)
+  posicion  Int        @default(0)
+  productos Producto[]
+
+  @@map("categorias")
+}
+
+model Producto {
+  id          Int       @id(map: "productos_pkey") @default(autoincrement())
+  created     DateTime? @default(now()) @db.Timestamp(6)
+  modified    DateTime? @default(now()) @db.Timestamp(6) // lo actualiza un trigger en cada UPDATE
+  descripcion String    @db.VarChar(1000)
+  precio      Decimal   @db.Decimal(10, 2)
+  imagenUrl   String?   @map("imagen_url") @db.VarChar(500)
+  categoriaId Int       @map("categoria_id")
+  categoria   Categoria @relation(fields: [categoriaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "productos_categoria_fk")
+
+  @@index([categoriaId], map: "productos_categoria_idx")
+  @@map("productos")
+}
+
+model Usuario {
+  id                  Int       @id(map: "usuarios_pkey") @default(autoincrement())
+  created             DateTime  @default(now()) @db.Timestamptz(6)
+  modified            DateTime  @default(now()) @db.Timestamptz(6) // lo actualiza un trigger
+  nombre              String    @db.VarChar(100)
+  // Único sin distinguir mayúsculas mediante un índice sobre lower(email) (solo en SQL).
+  // Por eso no lleva @unique: buscar con findFirst({ where: { email: email.toLowerCase() } }).
+  email               String    @db.VarChar(254)
+  passwordHash        String    @map("password_hash")
+  rol                 String    @default("admin") @db.VarChar(20)
+  activo              Boolean   @default(true)
+  debeCambiarPassword Boolean   @default(false) @map("debe_cambiar_password")
+  intentosFallidos    Int       @default(0) @map("intentos_fallidos") @db.SmallInt
+  bloqueadoHasta      DateTime? @map("bloqueado_hasta") @db.Timestamptz(6)
+  ultimoLogin         DateTime? @map("ultimo_login") @db.Timestamptz(6)
+
+  @@map("usuarios")
+}
