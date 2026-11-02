@@ -95,6 +95,7 @@ export default function Products() {
             <div className="arow__info">
               <strong>{p.descripcion}</strong>
               <small>{p.categoria}</small>
+              {p.enumSiNo && <small>Opciones: {p.enumDetalle.join(', ')}</small>}
             </div>
             <span className="arow__price">{formatPrice(p.precio)}</span>
             <div className="arow__actions">

@@ -17,6 +17,8 @@ const toProduct = (p) => ({
   price: Number(p.precio),
   image_url: absolute(p.imagenUrl),
   category_slug: p.categoria.slug,
+  has_options: p.enumSiNo,
+  options: p.enumSiNo ? p.enumDetalle : [],
   stock: null, // la tabla actual no controla stock
   is_active: true,
 });
@@ -31,7 +33,10 @@ router.get('/products', async (req, res, next) => {
         ...(category && { categoria: { slug: category } }),
         ...(q && { descripcion: { contains: likeEscape(q), mode: 'insensitive' } }),
       },
-      select: { id: true, descripcion: true, precio: true, imagenUrl: true, categoria: { select: { slug: true } } },
+      select: {
+        id: true, descripcion: true, precio: true, imagenUrl: true, enumSiNo: true, enumDetalle: true,
+        categoria: { select: { slug: true } },
+      },
       orderBy: [{ descripcion: 'asc' }, { id: 'asc' }],
       take: MAX_RESULTS,
     });

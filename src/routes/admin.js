@@ -83,6 +83,7 @@ router.get('/me', (req, res) => res.json({ user: publicUser(req.user) }));
 // ---------------- Productos ----------------
 const select = {
   id: true, descripcion: true, precio: true, imagenUrl: true, categoriaId: true, created: true, modified: true,
+  enumSiNo: true, enumDetalle: true,
   categoria: { select: { nombre: true } },
 };
 const toAdminProduct = (p) => ({
@@ -93,6 +94,8 @@ const toAdminProduct = (p) => ({
   imagenSrc: absolute(p.imagenUrl),
   categoriaId: p.categoriaId,
   categoria: p.categoria?.nombre ?? '',
+  enumSiNo: p.enumSiNo,
+  enumDetalle: p.enumDetalle,
   created: p.created,
   modified: p.modified,
 });
@@ -134,7 +137,14 @@ router.get('/products/:id', async (req, res, next) => {
   } catch (err) { return next(err); }
 });
 
-const toData = (d) => ({ descripcion: d.descripcion, precio: d.precio.toFixed(2), categoriaId: d.categoriaId, imagenUrl: d.imagenUrl });
+const toData = (d) => ({
+  descripcion: d.descripcion,
+  precio: d.precio.toFixed(2),
+  categoriaId: d.categoriaId,
+  imagenUrl: d.imagenUrl,
+  enumSiNo: d.enumSiNo,
+  enumDetalle: d.enumSiNo ? d.enumDetalle : [], // sin opciones activadas, no se guarda nada
+});
 
 router.post('/products', async (req, res, next) => {
   try {

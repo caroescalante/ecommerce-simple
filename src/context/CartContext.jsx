@@ -4,20 +4,29 @@ const CartContext = createContext(null);
 const KEY = 'dismarco-cart-v1';
 const maxFor = (i) => (i.stock == null ? Infinity : i.stock);
 
+// Cada línea del carrito es producto + opción: "12" o "12::Manzana"
+const keyOf = (id, variant) => (variant ? `${id}::${variant}` : String(id));
+
 function reducer(items, a) {
   switch (a.type) {
     case 'add': {
-      const p = a.product;
-      if (items.some((i) => i.id === p.id)) {
-        return items.map((i) => (i.id === p.id ? { ...i, qty: Math.min(i.qty + 1, maxFor(i)) } : i));
+      const { product: p, variant = null, qty = 1 } = a;
+      const key = keyOf(p.id, variant);
+      if (items.some((i) => i.key === key)) {
+        return items.map((i) => (i.key === key ? { ...i, qty: Math.min(i.qty + qty, maxFor(i)) } : i));
       }
-      return [...items, { id: p.id, name: p.name, price: p.price, imageUrl: p.imageUrl, stock: p.stock, qty: 1 }];
+      return [
+        ...items,
+        { key, id: p.id, variant, name: p.name, price: p.price, imageUrl: p.imageUrl, stock: p.stock, qty: Math.min(qty, maxFor(p)) },
+      ];
     }
-    case 'setQty':
+    case 'setQty': {
+      const key = String(a.key);
       return a.qty <= 0
-        ? items.filter((i) => i.id !== a.id)
-        : items.map((i) => (i.id === a.id ? { ...i, qty: Math.min(a.qty, maxFor(i)) } : i));
-    case 'remove': return items.filter((i) => i.id !== a.id);
+        ? items.filter((i) => i.key !== key)
+        : items.map((i) => (i.key === key ? { ...i, qty: Math.min(a.qty, maxFor(i)) } : i));
+    }
+    case 'remove': return items.filter((i) => i.key !== String(a.key));
     case 'clear': return [];
     default: return items;
   }
@@ -26,7 +35,9 @@ function reducer(items, a) {
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(KEY));
-    return Array.isArray(saved) ? saved : [];
+    if (!Array.isArray(saved)) return [];
+    // Migra carritos guardados antes de existir las opciones
+    return saved.map((i) => ({ variant: null, ...i, key: i.key ?? String(i.id) }));
   } catch { return []; }
 }
 
@@ -42,10 +53,12 @@ export function CartProvider({ children }) {
     items,
     count: items.reduce((n, i) => n + i.qty, 0),
     total: items.reduce((n, i) => n + i.price * i.qty, 0),
-    qtyOf: (id) => items.find((i) => i.id === id)?.qty ?? 0,
-    add: (product) => dispatch({ type: 'add', product }),
-    setQty: (id, qty) => dispatch({ type: 'setQty', id, qty }),
-    remove: (id) => dispatch({ type: 'remove', id }),
+    // cantidad total de un producto, sumando todas sus opciones
+    qtyOf: (id) => items.filter((i) => i.id === id).reduce((n, i) => n + i.qty, 0),
+    add: (product, variant = null, qty = 1) => dispatch({ type: 'add', product, variant, qty }),
+    // setQty y remove reciben la key de la línea (item.key). Para productos sin opción, key === String(id)
+    setQty: (key, qty) => dispatch({ type: 'setQty', key, qty }),
+    remove: (key) => dispatch({ type: 'remove', key }),
     clear: () => dispatch({ type: 'clear' }),
     isOpen,
     openCart: () => setOpen(true),

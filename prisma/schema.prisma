@@ -28,6 +28,8 @@ model Producto {
   descripcion String    @db.VarChar(1000)
   precio      Decimal   @db.Decimal(10, 2)
   imagenUrl   String?   @map("imagen_url") @db.VarChar(500)
+  enumSiNo    Boolean   @default(false) @map("enum_si_no")
+  enumDetalle String[]  @default([]) @map("enum_detalle") // opciones a elegir (sabores, etc.); solo se usan si enumSiNo
   categoriaId Int       @map("categoria_id")
   categoria   Categoria @relation(fields: [categoriaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "productos_categoria_fk")
 

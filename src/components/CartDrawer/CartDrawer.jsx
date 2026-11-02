@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { ProductImage } from '../ProductCard/ProductCard';
 import { formatPrice } from '../../utils/format';
+import { getProductOptions } from '../../data/productOptions';
 import { useProducts } from '../../hooks/useProducts';
 import './CartDrawer.css';
 
@@ -39,7 +40,8 @@ export default function CartDrawer() {
     if (missing === 0) return [];
     const inCart = new Set(items.map((i) => i.id));
     return products
-      .filter((p) => p.isActive !== false && !inCart.has(p.id) && (p.stock == null || p.stock > 0))
+      // Se excluyen los productos con opciones: no se pueden agregar sin elegir una
+      .filter((p) => p.isActive !== false && !getProductOptions(p) && !inCart.has(p.id) && (p.stock == null || p.stock > 0))
       .sort((a, b) => Math.abs(a.price - missing) - Math.abs(b.price - missing))
       .slice(0, MAX_SUGGESTIONS);
   }, [products, items, missing]);
@@ -68,23 +70,27 @@ export default function CartDrawer() {
         ) : (
           <>
             <ul className="cart__list">
-              {items.map((i) => (
-                <li key={i.id} className="citem">
+              {items.map((i) => {
+                // Cada línea es producto + opción: Baggio 1L (Manzana) y Baggio 1L (Naranja) van por separado
+                const label = i.variant ? `${i.name} (${i.variant})` : i.name;
+                return (
+                <li key={i.key} className="citem">
                   <ProductImage product={i} className="citem__img" />
                   <div>
-                    <p className="citem__name">{i.name}</p>
+                    <p className="citem__name">{label}</p>
                     <p className="citem__price">{formatPrice(i.price * i.qty)}</p>
                     <div className="citem__row">
-                      <div className="qty" role="group" aria-label={`Cantidad de ${i.name}`}>
-                        <button onClick={() => setQty(i.id, i.qty - 1)} aria-label="Quitar uno"><Icon><path d="M5 12h14" /></Icon></button>
+                      <div className="qty" role="group" aria-label={`Cantidad de ${label}`}>
+                        <button onClick={() => setQty(i.key, i.qty - 1)} aria-label="Quitar uno"><Icon><path d="M5 12h14" /></Icon></button>
                         <output>{i.qty}</output>
-                        <button onClick={() => setQty(i.id, i.qty + 1)} disabled={i.stock != null && i.qty >= i.stock} aria-label="Agregar uno más"><Icon><path d="M12 5v14M5 12h14" /></Icon></button>
+                        <button onClick={() => setQty(i.key, i.qty + 1)} disabled={i.stock != null && i.qty >= i.stock} aria-label="Agregar uno más"><Icon><path d="M12 5v14M5 12h14" /></Icon></button>
                       </div>
-                      <button className="citem__remove" onClick={() => remove(i.id)}>Quitar</button>
+                      <button className="citem__remove" onClick={() => remove(i.key)}>Quitar</button>
                     </div>
                   </div>
                 </li>
-              ))}
+                );
+              })}
             </ul>
             <div className="cart__foot">
               {belowMin && (

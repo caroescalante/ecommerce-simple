@@ -16,6 +16,8 @@ const fromApi = (p) => ({
   price: Number(p.price),
   imageUrl: p.image_url,
   categorySlug: p.category_slug,
+  hasOptions: Boolean(p.has_options),
+  options: p.options ?? [], // opciones a elegir (sabores, etc.)
   stock: p.stock, // null = sin control de stock
   isActive: p.is_active,
 });

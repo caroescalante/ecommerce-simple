@@ -21,4 +21,14 @@ export const productSchema = z.object({
     .nullable()
     .optional()
     .transform((v) => v || null),
+  // Opciones del producto (sabores, variedades...). Si enumSiNo es false se guardan vacías (lo resuelve admin.js)
+  enumSiNo: z.boolean('Indicá si el producto tiene opciones').default(false),
+  enumDetalle: z
+    .array(z.string().trim().max(60, 'Cada opción admite hasta 60 caracteres'))
+    .max(30, 'Máximo 30 opciones')
+    .default([])
+    .transform((list) => [...new Set(list.filter(Boolean))]),
+}).refine((d) => !d.enumSiNo || d.enumDetalle.length > 0, {
+  message: 'Agregá al menos una opción',
+  path: ['enumDetalle'],
 });

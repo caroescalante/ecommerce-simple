@@ -13,6 +13,8 @@ export function normalizeProduct(p) {
     price: Number(p.price),
     imageUrl: p.imageUrl ?? p.image_url ?? null,
     categorySlug: p.categorySlug ?? p.category_slug,
+    hasOptions: Boolean(p.hasOptions ?? p.has_options),
+    options: p.options ?? [], // opciones a elegir (sabores, etc.)
     stock: p.stock ?? null, // null = sin control de stock
     isActive: p.isActive ?? p.is_active ?? true,
   };

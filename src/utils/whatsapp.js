@@ -4,7 +4,11 @@ const clean = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
 
 export function buildOrderMessage({ storeName, items, subtotal, method, pickup, name, phone, address, locality, freeShipping, reference, payment, transfer }) {
   const L = [`*Nuevo pedido - ${storeName}*`, '', '*Productos*'];
-  items.forEach((i) => L.push(`• ${i.qty} x ${clean(i.name)} - ${formatPrice(i.price * i.qty)}`));
+  // Formato: descripción (opción elegida) x cantidad - subtotal de la línea
+  items.forEach((i) => {
+    const option = clean(i.variant) ? ` (${clean(i.variant)})` : '';
+    L.push(`• ${clean(i.name)}${option} x ${i.qty} - ${formatPrice(i.price * i.qty)}`);
+  });
   L.push('', `*Subtotal:* ${formatPrice(subtotal)}`, '');
 
   if (method === 'domicilio') {

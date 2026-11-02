@@ -1,0 +1,76 @@
+/* Ajustá los colores con las variables de tu proyecto (los valores tras la coma son de respaldo) */
+.pdetail__overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: rgb(0 0 0 / .5);
+}
+.pdetail {
+  position: relative; display: flex; flex-direction: column;
+  width: 100%; max-width: 440px; max-height: 92dvh; overflow-y: auto;
+  background: var(--color-surface, #fff); color: var(--color-text, #1c1c1c);
+  border-radius: 20px 20px 0 0;
+  animation: pdetail-in .2s ease-out;
+}
+@keyframes pdetail-in { from { transform: translateY(24px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pdetail { animation: none; } }
+@media (min-width: 640px) {
+  .pdetail__overlay { align-items: center; }
+  .pdetail { border-radius: 20px; }
+}
+
+.pdetail__close {
+  position: absolute; top: 10px; right: 10px; z-index: 1;
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; cursor: pointer;
+  background: var(--color-surface, #fff); box-shadow: 0 1px 4px rgb(0 0 0 / .25);
+}
+.pdetail__close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.pdetail__media { aspect-ratio: 1 / 1; background: var(--color-surface-alt, #f4f4f2); display: grid; place-items: center; }
+.pdetail__img { width: 100%; height: 100%; object-fit: contain; }
+.pdetail__media .ph svg { width: 30%; fill: none; stroke: currentColor; stroke-width: 1.2; opacity: .35; }
+
+.pdetail__body { padding: 16px 18px 20px; display: grid; gap: 12px; }
+.pdetail__name { margin: 0; font-size: 1.2rem; line-height: 1.25; }
+.pdetail__price { margin: 0; font-size: 1.15rem; font-weight: 700; }
+.pdetail__desc { margin: 0; color: var(--color-muted, #5f5f5f); line-height: 1.5; }
+
+.pdetail__options { margin: 0; padding: 0; border: 0; min-width: 0; }
+.pdetail__options legend { padding: 0; margin-bottom: 8px; font-weight: 600; }
+.pdetail__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pdetail__chip {
+  position: relative; padding: 9px 14px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--color-border, #cfcfcf); font-size: .95rem;
+}
+.pdetail__chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.pdetail__chip.is-on {
+  border-color: var(--color-primary, #0b6bcb);
+  background: var(--color-primary, #0b6bcb); color: var(--color-on-primary, #fff);
+}
+.pdetail__chip:focus-within { outline: 2px solid var(--color-primary, #0b6bcb); outline-offset: 2px; }
+
+.pdetail__actions { display: flex; gap: 10px; align-items: stretch; margin-top: 4px; }
+.pdetail__qty {
+  display: flex; align-items: center; border: 1.5px solid var(--color-border, #cfcfcf); border-radius: 12px;
+}
+.pdetail__qty button { width: 40px; border: 0; background: none; font-size: 1.25rem; cursor: pointer; color: inherit; }
+.pdetail__qty button:disabled { opacity: .35; cursor: default; }
+.pdetail__qty output { min-width: 28px; text-align: center; font-weight: 600; }
+.pdetail__submit {
+  flex: 1; min-height: 48px; border: 0; border-radius: 12px; cursor: pointer;
+  font-weight: 700; font-size: 1rem;
+  background: var(--color-primary, #0b6bcb); color: var(--color-on-primary, #fff);
+}
+.pdetail__submit:disabled { background: var(--color-border, #d6d6d6); color: var(--color-muted, #6b6b6b); cursor: default; }
+.pdetail button:focus-visible { outline: 2px solid var(--color-primary, #0b6bcb); outline-offset: 2px; }
+
+/* Ajustes en la tarjeta del listado */
+.pcard__open { all: unset; cursor: pointer; }
+.pcard__open:focus-visible { outline: 2px solid var(--color-primary, #0b6bcb); outline-offset: 2px; }
+.pcard { cursor: pointer; }
+.pcard button, .pcard output { cursor: pointer; }
+.pcard__badge {
+  position: absolute; top: 8px; left: 8px; min-width: 24px; height: 24px; padding: 0 7px;
+  display: grid; place-items: center; border-radius: 999px; font-size: .8rem; font-weight: 700;
+  background: var(--color-primary, #0b6bcb); color: var(--color-on-primary, #fff);
+}
