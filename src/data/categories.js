@@ -14,7 +14,7 @@ const categories = [
   { slug: 'cigarrillos', name: 'Cigarrillos' },
   { slug: 'hielo', name: 'Hielo' },
   { slug: 'vinos', name: 'Vinos' },
-  { slug: 'espumante', name: 'Espumante' },
+  { slug: 'espumantes', name: 'Espumantes' },
 ];
 
 export default categories;
