@@ -1,0 +1,42 @@
+/* Todos los banners se apilan en la misma celda y ocupan el alto de .hero__banner */
+.hbanner { position: relative; display: grid; grid-template-rows: minmax(0, 1fr); width: 100%; height: 100%; }
+.hbanner__slide {
+  grid-area: 1 / 1; min-width: 0; min-height: 0;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+.hbanner__slide.is-active { opacity: 1; visibility: visible; transition: opacity 0.6s ease; }
+
+/* La regla original ".hero__banner > img" ya no alcanza (la imagen quedó un nivel más adentro) */
+.hbanner__slide > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Banners promocionales: mismo arte que .hero__art (patrón, brillo y tipografía), con otra dirección del degradado */
+.hero__art.hbanner__promo--1 {
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.18), transparent 45%),
+    radial-gradient(circle at 10% 90%, rgba(0, 0, 0, 0.35), transparent 50%),
+    repeating-linear-gradient(12deg, rgba(255, 255, 255, 0.05) 0 18px, transparent 18px 36px),
+    linear-gradient(225deg, var(--brand) 0%, var(--brand-dark) 100%);
+}
+.hero__art.hbanner__promo--2 {
+  background:
+    radial-gradient(circle at 15% 80%, rgba(255, 255, 255, 0.18), transparent 45%),
+    radial-gradient(circle at 90% 10%, rgba(0, 0, 0, 0.35), transparent 50%),
+    repeating-linear-gradient(-12deg, rgba(255, 255, 255, 0.05) 0 18px, transparent 18px 36px),
+    linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 100%);
+}
+
+/* Puntos de navegación */
+.hbanner__dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; gap: 2px; z-index: 2; }
+.hbanner__dots button { width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+.hbanner__dots button::after {
+  content: ""; width: 8px; height: 8px; border-radius: 999px;
+  background: rgb(255 255 255 / 0.55); box-shadow: 0 0 0 1px rgb(0 0 0 / 0.25);
+  transition: width 0.25s, background 0.25s;
+}
+.hbanner__dots button[aria-current="true"]::after { width: 20px; background: #fff; }
+.hbanner__dots button:focus-visible { outline: 2px solid #fff; outline-offset: 0; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hbanner__slide, .hbanner__slide.is-active, .hbanner__dots button::after { transition: none; }
+}

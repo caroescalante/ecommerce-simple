@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import store from '../../data/store';
 import logo from '../../assets/logo.png';
 import useOpenStatus, { DAY_NAMES } from './useOpenStatus';
+import HeroBanner from './HeroBanner';
 import './StoreHero.css';
 
 const Icon = ({ children }) => (
@@ -32,13 +33,7 @@ export default function StoreHero() {
   return (
     <section className="hero" aria-label="Portada de la tienda">
       <div className="hero__banner">
-        {store.banner ? (
-          <img src={store.banner} alt="" />
-        ) : (
-          <div className="hero__art" aria-hidden="true">
-            <span>{store.tagline}</span>
-          </div>
-        )}
+        <HeroBanner store={store} />
         <StatusBadge isOpen={status.isOpen} className="status--float" aria-hidden="true" />
       </div>
 
