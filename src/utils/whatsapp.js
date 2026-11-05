@@ -1,4 +1,5 @@
 import { formatPrice } from './format';
+import { computeDiscount } from './discounts';
 
 const clean = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
 
@@ -9,7 +10,12 @@ export function buildOrderMessage({ storeName, items, subtotal, method, pickup, 
     const option = clean(i.variant) ? ` (${clean(i.variant)})` : '';
     L.push(`• ${clean(i.name)}${option} x ${i.qty} - ${formatPrice(i.price * i.qty)}`);
   });
-  L.push('', `*Subtotal:* ${formatPrice(subtotal)}`, '');
+  L.push('', `*Subtotal:* ${formatPrice(subtotal)}`);
+  // El descuento se calcula acá, con la hora del momento de enviar: no depende de lo que pase la página
+  const discount = computeDiscount(subtotal);
+  const hasDiscount = discount.amount > 0;
+  if (hasDiscount) L.push(`*${discount.label}:* -${formatPrice(discount.amount)}`);
+  L.push('');
 
   if (method === 'domicilio') {
     L.push(
@@ -32,6 +38,6 @@ export function buildOrderMessage({ storeName, items, subtotal, method, pickup, 
   }
 
   const extra = method === 'domicilio' && !freeShipping ? ' + envío a cotizar' : '';
-  L.push('', `*Total:* ${formatPrice(subtotal)}${extra}`);
+  L.push('', `*Total:* ${formatPrice(hasDiscount ? discount.total : subtotal)}${extra}`);
   return L.join('\n');
 }

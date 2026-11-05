@@ -41,3 +41,16 @@
 .csug__add { padding: .35rem .7rem; font-size: .85rem; }
 .cart__foot .btn:disabled { opacity: .55; cursor: not-allowed; }
 
+
+/* ===== Descuentos ===== */
+:root { --discount: #15803d; }
+@media (prefers-color-scheme: dark) { :root { --discount: #4ade80; } }
+.cart__promo .cart__bar span { background: var(--discount); }
+.cart__hint { color: var(--muted); font-size: .85rem; }
+.cart__totals { display: grid; gap: 6px; }
+.cart__row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--muted); }
+.cart__row small { display: block; font-size: 12px; font-weight: 400; }
+.cart__row--discount { color: var(--discount); font-weight: 600; }
+.cart__notice { display: grid; gap: 6px; padding: 10px 12px; border-radius: 10px; background: var(--soft); border: 1px solid var(--line); font-size: 14px; }
+.cart__notice p { margin: 0; }
+.cart__notice button { justify-self: end; border: 0; background: transparent; color: var(--brand-text); font-weight: 600; padding: 4px; }

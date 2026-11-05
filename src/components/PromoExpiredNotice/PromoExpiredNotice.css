@@ -1,0 +1,6 @@
+.promo-notice { width: min(92vw, 400px); border: 0; border-radius: 20px; padding: 22px; background: var(--bg); color: var(--ink); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4); }
+.promo-notice::backdrop { background: rgba(2, 6, 23, 0.6); }
+.promo-notice h2 { margin: 0 0 8px; font-size: 20px; }
+.promo-notice p { margin: 0 0 12px; line-height: 1.45; }
+.promo-notice__total { font-size: 16px; }
+.promo-notice .btn { width: 100%; }

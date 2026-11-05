@@ -123,6 +123,7 @@ export default function Header() {
                 <li key={c.slug}>
                   <NavLink to={`/categoria/${c.slug}`}>{c.name}</NavLink>
                 </li>
+                // console.log()
               ))}
             </ul>
             <button className="catnav__arrow catnav__arrow--r" onClick={() => scrollNav(1)} aria-label="Siguiente">
