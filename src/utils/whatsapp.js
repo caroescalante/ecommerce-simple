@@ -1,20 +1,26 @@
 import { formatPrice } from './format';
-import { computeDiscount } from './discounts';
+import { computeCartDiscount, isPromoItem, PROMO_CATEGORY_NAME } from './discounts';
 
 const clean = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
 
-export function buildOrderMessage({ storeName, items, subtotal, method, pickup, name, phone, address, locality, freeShipping, reference, payment, transfer }) {
+export function buildOrderMessage({ storeName, items, method, pickup, name, phone, address, locality, freeShipping, reference, payment, transfer }) {
   const L = [`*Nuevo pedido - ${storeName}*`, '', '*Productos*'];
   // Formato: descripción (opción elegida) x cantidad - subtotal de la línea
   items.forEach((i) => {
     const option = clean(i.variant) ? ` (${clean(i.variant)})` : '';
-    L.push(`• ${clean(i.name)}${option} x ${i.qty} - ${formatPrice(i.price * i.qty)}`);
+    const promo = isPromoItem(i) ? ` [${PROMO_CATEGORY_NAME}]` : '';
+    L.push(`• ${clean(i.name)}${option} x ${i.qty} - ${formatPrice(i.price * i.qty)}${promo}`);
   });
-  L.push('', `*Subtotal:* ${formatPrice(subtotal)}`);
-  // El descuento se calcula acá, con la hora del momento de enviar: no depende de lo que pase la página
-  const discount = computeDiscount(subtotal);
-  const hasDiscount = discount.amount > 0;
-  if (hasDiscount) L.push(`*${discount.label}:* -${formatPrice(discount.amount)}`);
+
+  // Los totales se calculan acá, con la hora del momento de enviar: no dependen de lo que pase la página.
+  // El descuento solo alcanza a los productos que no son de Promociones.
+  const d = computeCartDiscount(items);
+  const hasPromo = d.promoSubtotal > 0;
+  L.push('', `*Subtotal:* ${formatPrice(d.subtotal)}`);
+  if (hasPromo) L.push(`*Productos en ${PROMO_CATEGORY_NAME} (sin descuento):* ${formatPrice(d.promoSubtotal)}`);
+  if (d.amount > 0) {
+    L.push(`*${d.label}${hasPromo ? ` (sobre ${formatPrice(d.eligibleSubtotal)})` : ''}:* -${formatPrice(d.amount)}`);
+  }
   L.push('');
 
   if (method === 'domicilio') {
@@ -38,6 +44,7 @@ export function buildOrderMessage({ storeName, items, subtotal, method, pickup, 
   }
 
   const extra = method === 'domicilio' && !freeShipping ? ' + envío a cotizar' : '';
-  L.push('', `*Total:* ${formatPrice(hasDiscount ? discount.total : subtotal)}${extra}`);
+  L.push('', `*Total:* ${formatPrice(d.total)}${extra}`);
+  L.push('', `_Aclaración: los productos de la categoría ${PROMO_CATEGORY_NAME} no son acumulables con los Descuentos._`);
   return L.join('\n');
 }

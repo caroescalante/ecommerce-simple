@@ -4,7 +4,8 @@ import { useCart } from '../../context/CartContext';
 import { ProductImage } from '../ProductCard/ProductCard';
 import { formatPrice } from '../../utils/format';
 import { getProductOptions } from '../../data/productOptions';
-import { DISCOUNT_THRESHOLD, DISCOUNT_THRESHOLD_TEXT, VOLUME_RATE, EARLY_RATE, EARLY_END } from '../../utils/discounts';
+import { DISCOUNT_THRESHOLD, DISCOUNT_THRESHOLD_TEXT, VOLUME_RATE, EARLY_RATE, EARLY_END, PROMO_CATEGORY_NAME, isPromoItem } from '../../utils/discounts';
+import OrderTotals from '../OrderTotals/OrderTotals';
 import { useProducts } from '../../hooks/useProducts';
 import useDiscount from '../../hooks/useDiscount';
 import './CartDrawer.css';
@@ -40,7 +41,7 @@ function SuggestionList({ list, label, onAdd }) {
 
 export default function CartDrawer() {
   const { items, count, total: subtotal, add, setQty, remove, clear, isOpen, closeCart } = useCart();
-  const { discount, notice, dismissNotice } = useDiscount(subtotal);
+  const { discount, notice, dismissNotice } = useDiscount(items);
   const closeRef = useRef(null);
   const navigate = useNavigate();
 
@@ -56,12 +57,14 @@ export default function CartDrawer() {
     };
   }, [isOpen, closeCart]);
 
-  // Pedido mínimo (sobre el subtotal, antes de descuentos)
+  // Pedido mínimo (sobre el subtotal de todo el carrito, Promociones incluidas, antes de descuentos)
   const missing = Math.max(0, MIN_ORDER - subtotal);
   const belowMin = items.length > 0 && missing > 0;
 
-  // Camino al descuento por monto: lo que falta para SUPERAR el umbral (con el umbral exacto todavía no aplica)
-  const toDiscount = DISCOUNT_THRESHOLD - subtotal;
+  // Camino al descuento por monto: se mide sobre los productos que NO son de Promociones,
+  // y lo que falta es para SUPERAR el umbral (con el umbral exacto todavía no aplica)
+  const { eligibleSubtotal, promoSubtotal } = discount;
+  const toDiscount = DISCOUNT_THRESHOLD - eligibleSubtotal;
   const chasingDiscount = items.length > 0 && !belowMin && toDiscount >= 0;
   const nearDiscount = toDiscount <= NEAR_AMOUNT;
 
@@ -78,12 +81,13 @@ export default function CartDrawer() {
       .slice(0, MAX_SUGGESTIONS);
   }, [products, items, belowMin, missing]);
 
-  // Para el descuento: productos que por sí solos hacen superar el umbral, del más barato al más caro
+  // Para el descuento: productos que por sí solos hacen superar el umbral, del más barato al más caro.
+  // Los de Promociones no se sugieren: no suman para el descuento
   const discountSuggestions = useMemo(() => {
     if (!chasingDiscount) return [];
     const inCart = new Set(items.map((i) => i.id));
     return products
-      .filter((p) => suggestable(p, inCart) && p.price > toDiscount)
+      .filter((p) => suggestable(p, inCart) && !isPromoItem(p) && p.price > toDiscount)
       .sort((a, b) => a.price - b.price)
       .slice(0, MAX_SUGGESTIONS);
   }, [products, items, chasingDiscount, toDiscount]);
@@ -166,26 +170,18 @@ export default function CartDrawer() {
                       ? <>Te faltan <strong>{formatPrice(toDiscount)}</strong> para superar los {DISCOUNT_THRESHOLD_TEXT}.</>
                       : <>Sumá un producto más para superar los {DISCOUNT_THRESHOLD_TEXT}.</>}
                   </p>
-                  <div className="cart__bar" role="progressbar" aria-valuemin={0} aria-valuemax={DISCOUNT_THRESHOLD} aria-valuenow={Math.min(subtotal, DISCOUNT_THRESHOLD)} aria-label={`Avance hacia el ${pct(VOLUME_RATE)} de descuento`}>
-                    <span style={{ width: `${Math.min(100, (subtotal / DISCOUNT_THRESHOLD) * 100)}%` }} />
+                  <div className="cart__bar" role="progressbar" aria-valuemin={0} aria-valuemax={DISCOUNT_THRESHOLD} aria-valuenow={Math.min(eligibleSubtotal, DISCOUNT_THRESHOLD)} aria-label={`Avance hacia el ${pct(VOLUME_RATE)} de descuento`}>
+                    <span style={{ width: `${Math.min(100, (eligibleSubtotal / DISCOUNT_THRESHOLD) * 100)}%` }} />
                   </div>
+                  {promoSubtotal > 0 && (
+                    <p className="cart__hint">Tus productos de {PROMO_CATEGORY_NAME} ({formatPrice(promoSubtotal)}) no suman para el descuento.</p>
+                  )}
                   {discountSuggestions.length > 0 && <p className="cart__hint">Cualquiera de estos te hace llegar:</p>}
                   <SuggestionList list={discountSuggestions} label={`Productos que te hacen llegar al ${pct(VOLUME_RATE)} de descuento`} onAdd={add} />
                 </div>
               )}
 
-              <div className="cart__totals">
-                {discount.amount > 0 && (
-                  <>
-                    <div className="cart__row"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
-                    <div className="cart__row cart__row--discount">
-                      <span>{discount.label}<small>{discount.reason}</small></span>
-                      <span>−{formatPrice(discount.amount)}</span>
-                    </div>
-                  </>
-                )}
-                <div className="cart__total"><span>Total</span><strong>{formatPrice(discount.total)}</strong></div>
-              </div>
+              <OrderTotals discount={discount} />
 
               <button className="btn btn--accent" onClick={checkout} disabled={belowMin}>
                 {belowMin ? `Mínimo ${formatPrice(MIN_ORDER)}` : 'Finalizar pedido'}

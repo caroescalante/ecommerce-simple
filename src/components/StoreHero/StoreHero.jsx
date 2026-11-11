@@ -3,6 +3,7 @@ import store from '../../data/store';
 import logo from '../../assets/logo.png';
 import useOpenStatus, { DAY_NAMES } from './useOpenStatus';
 import HeroBanner from './HeroBanner';
+import PromoTerms from '../PromoTerms/PromoTerms';
 import './StoreHero.css';
 
 const Icon = ({ children }) => (
@@ -68,6 +69,8 @@ export default function StoreHero() {
           </button>
         </div>
       </div>
+
+      <PromoTerms />
 
       <dialog ref={dialogRef} className="modal" onClick={closeOnBackdrop} aria-labelledby="info-title">
         <div className="modal__head">

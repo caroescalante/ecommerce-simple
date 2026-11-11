@@ -40,3 +40,7 @@
 @media (prefers-reduced-motion: reduce) {
   .hbanner__slide, .hbanner__slide.is-active, .hbanner__dots button::after { transition: none; }
 }
+
+/* Aclaración debajo del texto de cada banner promocional */
+.hbanner__promo-text { display: grid; justify-items: center; gap: 8px; }
+.hbanner__promo-text small { padding: 0 24px; color: rgba(255, 255, 255, 0.92); font-size: clamp(11px, 2.6vw, 15px); font-weight: 600; letter-spacing: 0.02em; text-align: center; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { promoBanners, BANNER_INTERVAL_MS } from '../../data/banners';
+import { PROMO_CATEGORY_NAME } from '../../utils/discounts';
 import './HeroBanner.css';
 
 const prefersReducedMotion = () =>
@@ -17,7 +18,10 @@ export default function HeroBanner({ store }) {
       : <div className="hero__art" aria-hidden="true"><span>{store.tagline}</span></div>,
     ...promoBanners.map((b, n) => (
       <div key={b.id} className={`hero__art hbanner__promo--${(n % 2) + 1}`}>
-        <span>{b.text}</span>
+        <div className="hbanner__promo-text">
+          <span>{b.text}</span>
+          <small>No aplica a productos de {PROMO_CATEGORY_NAME}</small>
+        </div>
       </div>
     )),
   ];

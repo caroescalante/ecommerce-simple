@@ -17,7 +17,7 @@ function reducer(items, a) {
       }
       return [
         ...items,
-        { key, id: p.id, variant, name: p.name, price: p.price, imageUrl: p.imageUrl, stock: p.stock, qty: Math.min(qty, maxFor(p)) },
+        { key, id: p.id, variant, name: p.name, price: p.price, imageUrl: p.imageUrl, categorySlug: p.categorySlug, stock: p.stock, qty: Math.min(qty, maxFor(p)) },
       ];
     }
     case 'setQty': {

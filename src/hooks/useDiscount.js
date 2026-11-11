@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { computeDiscount } from '../utils/discounts';
+import { computeCartDiscount } from '../utils/discounts';
 
 const FLAG = 'dismarco-promo-seen'; // "el usuario llegó a ver aplicado el descuento por horario"
 const FLAG_TTL = 3 * 60 * 60 * 1000;
@@ -12,14 +12,14 @@ const seen = {
 };
 
 /**
- * Calcula el descuento del subtotal y lo mantiene al día con el reloj.
- *  - discount: { rate, code, label, reason, amount, total, earlyActive, ... }
+ * Calcula el descuento del carrito (items de useCart) y lo mantiene al día con el reloj.
+ *  - discount: { subtotal, promoSubtotal, eligibleSubtotal, rate, code, label, reason, amount, total, earlyActive }
  *  - notice: true cuando la promo por horario terminó después de que el usuario la vio aplicada
  *  - dismissNotice(): cierra el aviso
  *  - revalidate(): llamarla justo antes de enviar el pedido. Devuelve true si el descuento
  *    cambió (en ese caso muestra el aviso y conviene NO enviar todavía).
  */
-export default function useDiscount(subtotal) {
+export default function useDiscount(items) {
   const [now, setNow] = useState(() => new Date());
   const [notice, setNotice] = useState(false);
 
@@ -40,24 +40,24 @@ export default function useDiscount(subtotal) {
     };
   }, []);
 
-  const discount = useMemo(() => computeDiscount(subtotal, now), [subtotal, now]);
+  const discount = useMemo(() => computeCartDiscount(items, now), [items, now]);
 
   useEffect(() => {
-    if (subtotal <= 0) { seen.clear(); setNotice(false); return; }
+    if (discount.subtotal <= 0) { seen.clear(); setNotice(false); return; }
     if (discount.code === 'horario') { seen.set(); return; }
     // La promo por horario se vio aplicada y ya terminó (y no hay otro descuento que la reemplace)
     if (!discount.earlyActive && discount.code !== 'volumen' && seen.get()) setNotice(true);
-  }, [subtotal, discount.code, discount.earlyActive]);
+  }, [discount.subtotal, discount.code, discount.earlyActive]);
 
   const dismissNotice = useCallback(() => { seen.clear(); setNotice(false); }, []);
 
   const revalidate = useCallback(() => {
-    const fresh = computeDiscount(subtotal, new Date());
+    const fresh = computeCartDiscount(items, new Date());
     if (fresh.amount === discount.amount) return false;
     setNow(new Date());
     if (discount.code === 'horario' && !fresh.earlyActive && fresh.code !== 'volumen') setNotice(true);
     return true;
-  }, [subtotal, discount.amount, discount.code]);
+  }, [items, discount.amount, discount.code]);
 
   return { discount, notice, dismissNotice, revalidate };
 }

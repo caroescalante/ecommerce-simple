@@ -74,3 +74,10 @@
   display: grid; place-items: center; border-radius: 999px; font-size: .8rem; font-weight: 700;
   background: var(--color-primary, #0b6bcb); color: var(--color-on-primary, #fff);
 }
+
+.pdetail__qty-input {
+  width: 56px; padding: 0; border: 0; background: transparent; color: inherit;
+  text-align: center; font-weight: 600; font-size: 16px; /* 16px evita el zoom automático en iPhone */
+}
+.pdetail__qty-input:focus { outline: none; }
+.pdetail__qty:focus-within { outline: 2px solid var(--color-primary, #0b6bcb); outline-offset: 2px; }

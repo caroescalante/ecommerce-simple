@@ -1,0 +1,10 @@
+:root { --discount: #15803d; }
+@media (prefers-color-scheme: dark) { :root { --discount: #4ade80; } }
+.otot { display: grid; gap: 6px; }
+.otot__row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--muted); }
+.otot__row small { display: block; font-size: 12px; font-weight: 400; }
+.otot__row--sub { padding-left: 12px; font-size: 13px; }
+.otot__row--discount { color: var(--discount); font-weight: 600; }
+.otot__total { display: flex; justify-content: space-between; align-items: baseline; font-size: 15px; color: var(--ink); }
+.otot__total strong { font-size: 22px; }
+.otot .promo-terms { margin-top: 4px; }

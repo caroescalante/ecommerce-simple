@@ -1,0 +1,5 @@
+.promo-terms { display: flex; gap: 8px; align-items: flex-start; margin: 4px 16px 12px; padding: 9px 12px; border-radius: 10px; background: var(--soft); color: var(--muted); font-size: 13px; line-height: 1.4; }
+.promo-terms svg { width: 16px; height: 16px; flex: none; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.promo-terms strong { color: var(--ink); font-weight: 600; }
+.promo-terms--flush { margin: 0; }
+@media (min-width: 700px) { .promo-terms:not(.promo-terms--flush) { margin: 4px 24px 14px; } }

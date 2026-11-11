@@ -8,6 +8,11 @@ export const EARLY_START = '09:30'; // apertura
 export const EARLY_END = '16:00'; // inclusive: a las 16:00 vale, a las 16:01 ya no
 export const DISCOUNT_THRESHOLD_TEXT = `$${DISCOUNT_THRESHOLD.toLocaleString('es-AR')}`;
 
+// Los productos de esta categoría NO entran en los descuentos (no son acumulables).
+// Poné acá el slug EXACTO de la categoría en la base (categorias.slug).
+export const PROMO_CATEGORY_SLUGS = ['promociones'];
+export const PROMO_CATEGORY_NAME = 'Promociones';
+
 const TIME_ZONE = store.timeZone || 'America/Argentina/Buenos_Aires';
 
 const toMinutes = (hhmm) => {
@@ -25,14 +30,35 @@ export function minutesInZone(date = new Date(), timeZone = TIME_ZONE) {
   return get('hour') * 60 + get('minute');
 }
 
+// Sirve para productos y para líneas del carrito (ambos tienen categorySlug)
+export const isPromoItem = (item) =>
+  PROMO_CATEGORY_SLUGS.includes(String(item?.categorySlug ?? '').toLowerCase());
+
+// Separa el carrito: lo que puede tener descuento y lo que está en Promociones
+export function splitSubtotals(items = []) {
+  let promoSubtotal = 0;
+  let eligibleSubtotal = 0;
+  items.forEach((i) => {
+    const line = (Number(i.price) || 0) * (Number(i.qty) || 0);
+    if (isPromoItem(i)) promoSubtotal += line;
+    else eligibleSubtotal += line;
+  });
+  return {
+    subtotal: round2(promoSubtotal + eligibleSubtotal),
+    promoSubtotal: round2(promoSubtotal),
+    eligibleSubtotal: round2(eligibleSubtotal),
+  };
+}
+
 export function isEarlyPromoActive(date = new Date()) {
   const m = minutesInZone(date);
   return m >= toMinutes(EARLY_START) && m <= toMinutes(EARLY_END);
 }
 
 /**
- * Descuento que corresponde a un subtotal en un momento dado.
- * Los descuentos NO se acumulan: si corresponden los dos, se aplica el mayor (30%).
+ * Descuento que corresponde a una BASE (subtotal sin productos de Promociones) en un momento dado.
+ * Los descuentos NO se acumulan entre sí: si corresponden los dos, se aplica el mayor (30%).
+ * Para un carrito completo usar computeCartDiscount.
  */
 export function computeDiscount(subtotal, date = new Date()) {
   const base = Number(subtotal) || 0;
@@ -62,4 +88,16 @@ export function computeDiscount(subtotal, date = new Date()) {
     total: round2(base - amount),
     earlyActive,
   };
+}
+
+/**
+ * Descuento de un carrito completo.
+ *  - El descuento se calcula SOLO sobre los productos que no son de Promociones (eligibleSubtotal)
+ *  - El umbral de $70.000 también se mide sobre esa base
+ *  - total = subtotal (todo el carrito) - descuento
+ */
+export function computeCartDiscount(items, date = new Date()) {
+  const { subtotal, promoSubtotal, eligibleSubtotal } = splitSubtotals(items);
+  const d = computeDiscount(eligibleSubtotal, date);
+  return { ...d, subtotal, promoSubtotal, eligibleSubtotal, total: round2(subtotal - d.amount) };
 }
